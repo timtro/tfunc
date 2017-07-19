@@ -6,11 +6,6 @@ namespace compose01 {
   // of. It uses simple recursion to nest the functions into eachother like
   // матрёшка. The calls are wrapped in lambdas and the outer lambda handles
   // the input argument(s).
-  //
-  // template <typename F>
-  // auto compose(F f) {
-  //   return [f](auto x) { return f(x); };
-  // }
 
   template <typename F, typename... Fs>
   auto compose(F f, Fs... fs) {
@@ -21,6 +16,18 @@ namespace compose01 {
   }
 
 } // namespace compose01
+
+namespace pipe01 {
+  // Details: In the same vein as compose01, this is the simplest pipe I could
+  // come up with.
+  template <typename T, typename F0, typename... Fs>
+  auto pipe(T x, F0 f, Fs... gh) {
+    if constexpr (sizeof...(Fs) < 1)
+      return std::invoke(f, x);
+    else
+      return pipe(std::invoke(f, x), gh...);
+  }
+} // namespace pipe01
 
 namespace compose02 {
   // Details: implementation hinges on a function object containing a tuple of
@@ -84,16 +91,3 @@ namespace compose03 {
     };
   }
 } // namespace compose03
-
-namespace pipe01 {
-  // Details: In the same vein as compose01, this is the simplest pipe I could
-  // come up with.
-  template <typename T, typename F0, typename... Fs>
-  auto pipe(T x, F0 f, Fs... gh) {
-    puts(__PRETTY_FUNCTION__);
-    if constexpr (sizeof...(Fs) < 1)
-      return std::invoke(f, x);
-    else
-      return pipe(std::invoke(f, x), gh...);
-  }
-} // namespace pipe01
