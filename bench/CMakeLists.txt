@@ -1,2 +1,2 @@
-add_executable (function-composition composition-and-piping.cpp)
-target_link_libraries (function-composition -lbenchmark -lpthread)
+add_executable (function-composition-and-piping function-composition-and-piping.cpp)
+target_link_libraries (function-composition-and-piping -lbenchmark -lpthread)
