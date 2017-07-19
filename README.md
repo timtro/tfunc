@@ -1,6 +1,5 @@
-# tfunc: A Library *for* Functional Programming *in* C++17
-
----
+# tfunc
+## A Library *for* Functional Programming in C++17
 
 This is a personal garage to experiment with, benchmark and develop a C++17
 library for functional programming.

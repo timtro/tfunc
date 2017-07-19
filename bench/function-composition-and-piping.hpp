@@ -1,6 +1,9 @@
 #include <functional>
 #include <tuple>
 
+// No include guards. If you're including these outside of a benchmark, then
+// you're taking your life into your hands.
+
 namespace compose01 {
   // Details: The simplest, most straightforward implementation I could think
   // of. It uses simple recursion to nest the functions into eachother like
