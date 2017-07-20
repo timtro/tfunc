@@ -23,9 +23,14 @@ shambolic mess of different implementations, competing under Google's
 best performing of these will be copied into library sources in `/include` and
 `/src`.
 
-Around this point, I'm going to focus on getting the passing/returning semantics
-right in terms of forwarding/moving/copying. This is going to require a bit of
-extra attention in the case of lambdas. (see [here](
+While writing this library, Searched for as much functional C++ code as I could
+get my hands on, and reviewed it. The benchmark `.hpp` files in `bench` will
+contain the best examples I have found, along with URLs/citations for original
+sources.
+
+After completing some basics, I'm going to focus on getting the
+passing/returning semantics right in terms of forwarding/moving/copying. This is
+going to require a bit of extra attention in the case of lambdas. (see [here](
 https://vittorioromeo.info/index/blog/capturing_perfectly_forwarded_objects_in_lambdas.html).)
 
 Next, monads will be written for lists, optionals, read/writer and maybe IO.
