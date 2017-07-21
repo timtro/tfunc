@@ -13,22 +13,27 @@ namespace compose01 {
   template <typename F, typename... Fs>
   auto compose(F f, Fs... fs) {
     if constexpr (sizeof...(fs) < 1)
-      return [f](auto x) { return std::invoke(f, x); };
+      return [f](auto &&x) {
+        return std::invoke(f, std::forward<decltype(x)>(x));
+      };
     else
-      return [=](auto x) { return std::invoke(f, compose(fs...)(x)); };
+      return [f, fs...](auto &&x) {
+        return std::invoke(f, compose(fs...)(std::forward<decltype(x)>(x)));
+      };
   }
 
 } // namespace compose01
 
 namespace pipe01 {
   // Details: In the same vein as compose01, this is the simplest pipe I could
-  // come up with.
+  // come up with. I doesn't use lambdas, it just expands to nested invocations
+  // at compile-time.
   template <typename T, typename F0, typename... Fs>
-  auto pipe(T x, F0 f, Fs... gh) {
+  auto pipe(T &&x, F0 f, Fs... gh) {
     if constexpr (sizeof...(Fs) < 1)
-      return std::invoke(f, x);
+      return std::invoke(f, std::forward<decltype(x)>(x));
     else
-      return pipe(std::invoke(f, x), gh...);
+      return pipe(std::invoke(f, std::forward<decltype(x)>(x)), gh...);
   }
 } // namespace pipe01
 
@@ -41,6 +46,8 @@ namespace compose02 {
   //   https://www.youtube.com/watch?v=WtHWFoKf8o0
   // Most of the implementation was borrowed from
   //   https://codereview.stackexchange.com/a/63893/83811
+  // inluding the decay_t usage at the end that I'm still not sure about. I'm
+  // also not sure about the forwarding in that line.
 
   template <typename... Fs>
   struct composition_fobject {
@@ -88,8 +95,8 @@ namespace compose02 {
 namespace compose03 {
   // Details: define composition as a binary operator and use
   template <typename Tf, typename Tg>
-  auto fog(Tf &&f, Tg &&g) {
-    return [f, g](auto x) {
+  auto fog(Tf f, Tg g) {
+    return [f, g](auto &&x) {
       return std::invoke(f, std::invoke(g, std::forward<decltype(x)>(x)));
     };
   }
