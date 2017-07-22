@@ -16,7 +16,7 @@ namespace curry01 {
   // callables. The curry function, when called on a non-nullary callable
   // object, simply returns a variadic lambda object that will pack its given
   // argument(s) into a new variadic lambda object. This is packing and
-  // returning of unary lambdas is recursive, until the last required argument
+  // returning of lambdas is recursive, until the last required argument
   // is passed. Then, the final lambda object is nullary, and simply invokes the
   // nested lambdas.
 
@@ -46,9 +46,10 @@ namespace curry01 {
   }
 
   // This allows you to curry variadic functions. I got the idea of this from
-  // https://goo.gl/gBvBmx. This always returns a callable, but an argument of
-  // type call_t acts as a sentinal and forces the function call with previously
-  // bound arguments.
+  // https://goo.gl/gBvBmx. This returns a varidac callable which binds
+  // arguments, until an argument of type call_t is passed. Passing such forces
+  // the an invocation of the curried function with all previously bound
+  // arguments.
   template <typename F>
   auto curryX(F f) {
     return [f](auto x) {
