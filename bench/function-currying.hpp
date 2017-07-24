@@ -23,17 +23,17 @@ namespace curry01 {
   struct call_t {
   } call;
 
-  namespace detail {
+  namespace _dtl {
     template <typename T>
     using is_nullary_t = decltype(std::invoke(std::declval<T>()));
 
     template <typename T>
     constexpr bool is_nullary_v = is_detected_v<is_nullary_t, T>;
-  } // namespace detail
+  } // namespace _dtl
 
   template <typename F>
   auto curry(F f) {
-    if constexpr (detail::is_nullary_v<F>)
+    if constexpr (_dtl::is_nullary_v<F>)
       return std::invoke(f);
     else
       return [f](auto &&x) {
@@ -70,17 +70,17 @@ namespace curry02 {
   // Any difference in performance should be due to the universal calling
   // overhead.
   //
-  namespace detail {
+  namespace _dtl {
     template <typename T>
     using is_nullary_t = decltype(std::invoke(std::declval<T>()));
 
     template <typename T>
     constexpr bool is_nullary_v = is_detected_v<is_nullary_t, T>;
-  } // namespace detail
+  } // namespace _dtl
 
   template <typename F>
   auto curry(F f) {
-    if constexpr (detail::is_nullary_v<F>)
+    if constexpr (_dtl::is_nullary_v<F>)
       return f();
     else
       return [f](auto &&x) {
