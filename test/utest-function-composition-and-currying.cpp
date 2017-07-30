@@ -4,11 +4,7 @@
 #include <string>
 
 using tf::compose;
-
-template <typename T>
-T id(T &&xs) {
-  return std::forward<T>(xs);
-}
+using tf::id;
 
 TEST_CASE("`compose(f)` == `compose(f, id)` == `compose(id, f)`.") {
   auto f = [](auto x) { return x * x; };

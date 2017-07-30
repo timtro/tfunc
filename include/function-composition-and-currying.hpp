@@ -7,6 +7,11 @@ using std::experimental::is_detected_v;
 
 namespace tf {
 
+  template <typename T>
+  T id(T &&xs) {
+    return std::forward<T>(xs);
+  }
+
   template <typename F, typename... Fs>
   auto compose(F f, Fs... fs) {
     if constexpr (sizeof...(fs) < 1)
