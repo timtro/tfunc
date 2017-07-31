@@ -57,13 +57,16 @@ namespace tf {
       };
   }
 
+  // Compose key sequence for the middle-dot (·) is .^ or ^. (a period and a
+  // circumflex.) I would normally never use a special character in a name, but
+  // I think this is a good convention for variadic flavours of functions.
   template <typename F>
-  auto curryX(F f) {
+  auto curry···(F f) {
     return [f](auto x) {
       if constexpr (std::is_same<std::decay_t<decltype(x)>, call_t>::value)
         return std::invoke(f);
       else
-        return curryX(
+        return curry···(
             // perfectly capture x here:
             [f, x](auto &&... xs) -> decltype(std::invoke(f, x, xs...)) {
               return std::invoke(f, x, xs...);
