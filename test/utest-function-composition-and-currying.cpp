@@ -142,6 +142,23 @@ TEST_CASE("PMFs should curry", "[curry], [non-variadic], [interface]") {
   //                     ^ Always give pointer to object first.
 }
 
+TEST_CASE("A curried non-variadic function should preserve the lvalue ref-ness "
+          "of whatever is returned from the wrapped function.",
+          "[curry], [non-variadic], [interface]") {
+  A a{};
+  auto ref_to_a = [&a]() -> A & { return a; };
+  REQUIRE(std::is_reference<decltype(curry(ref_to_a))>::value);
+}
+
+TEST_CASE("A curried variadic function should preserve the lvalue ref-ness of "
+          "whatever is returned from the wrapped function.",
+          "[curry], [variadic], [interface]") {
+  A a{};
+  auto ref_to_a = [&a](...) -> A & { return a; };
+  REQUIRE(curry···(ref_to_a)(tf::call) == A{});
+  REQUIRE(std::is_reference<decltype(curry···(ref_to_a)(tf::call))>::value);
+}
+
 TEST_CASE("Curried functions should…") {
   auto ABtoC = curry([](A, B) -> C { return {}; });
   auto BtoC = ABtoC(A{});

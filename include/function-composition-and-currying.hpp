@@ -13,7 +13,7 @@ namespace tf {
   }
 
   template <typename F, typename... Fs>
-  auto compose(F f, Fs... fs) {
+  constexpr auto compose(F f, Fs... fs) {
     if constexpr (sizeof...(fs) < 1)
       return [f](auto &&x) {
         return std::invoke(f, std::forward<decltype(x)>(x));
@@ -25,7 +25,7 @@ namespace tf {
   }
 
   template <typename T, typename F0, typename... Fs>
-  auto pipe(T &&x, F0 f, Fs... gh) {
+  constexpr auto pipe(T &&x, F0 f, Fs... gh) {
     if constexpr (sizeof...(Fs) < 1)
       return std::invoke(f, std::forward<decltype(x)>(x));
     else
@@ -44,7 +44,7 @@ namespace tf {
   } // namespace _dtl
 
   template <typename F>
-  auto curry(F f) {
+  constexpr decltype(auto) curry(F f) {
     if constexpr (_dtl::is_nullary_v<F>)
       return std::invoke(f);
     else
@@ -61,8 +61,8 @@ namespace tf {
   // circumflex.) I would normally never use a special character in a name, but
   // I think this is a good convention for variadic flavours of functions.
   template <typename F>
-  auto curry···(F f) {
-    return [f](auto x) {
+  constexpr decltype(auto) curry···(F f) {
+    return [f](auto x) -> decltype(auto) {
       if constexpr (std::is_same<std::decay_t<decltype(x)>, call_t>::value)
         return std::invoke(f);
       else
