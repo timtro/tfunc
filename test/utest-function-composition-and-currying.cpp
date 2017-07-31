@@ -109,14 +109,35 @@ TEST_CASE("Curried non-variadic functions should bind arguments, one at a "
 TEST_CASE("Curried variadic functions should bind arguments, one at a time, "
           "from left to right untill a call-object is passed.",
           "[curry], [variadic], [interface]") {
-  // argument_echo : Q → W → … → (Q, W, …), for any types Q, W, ….
+  // argument_echo : (Q → W → …) → (Q, W, …), for any types Q, W, ….
   const auto argument_echo = [](auto... xs) {
     return std::tuple<decltype(xs)...>{xs...};
   };
-  auto echo = curry···(argument_echo);
-  auto[a, b, c, d] = echo(A{})(B{})(C{})(D{})(tf::call);
+
+  // argument_echo··· : Q → W → … → (Q, W, …), for any types Q, W, ….
+  auto argument_echo··· = curry···(argument_echo);
+  auto[a, b, c, d] = argument_echo···(A{})(B{})(C{})(D{})(tf::call);
   REQUIRE(a == A{});
   REQUIRE(b == B{});
   REQUIRE(c == C{});
   REQUIRE(d == D{});
+}
+
+D ABC_to_D(A, B, C) { return {}; }
+
+TEST_CASE("C-functions should curry", "[curry], [variadic], [interface]") {
+
+  auto A_B_C_to_D = curry(ABC_to_D);
+  REQUIRE(A_B_C_to_D(A{})(B{})(C{}) == D{});
+}
+
+struct Foo {
+  D d_returner(A, B, C) { return {}; }
+};
+
+TEST_CASE("PMFs should curry", "[curry], [non-variadic], [interface]") {
+  Foo foo;
+  auto foo_d_returner = curry(&Foo::d_returner);
+  REQUIRE(foo_d_returner(&foo)(A{})(B{})(C{}) == D{});
+  //                     ^ Always give pointer to object first.
 }
