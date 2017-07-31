@@ -147,7 +147,7 @@ TEST_CASE("A curried non-variadic function should preserve the lvalue ref-ness "
           "[curry], [non-variadic], [interface]") {
   A a{};
   auto ref_to_a = [&a]() -> A & { return a; };
-  REQUIRE(std::is_reference<decltype(curry(ref_to_a))>::value);
+  REQUIRE(std::is_lvalue_reference<decltype(curry(ref_to_a))>::value);
 }
 
 TEST_CASE("A curried variadic function should preserve the lvalue ref-ness of "
@@ -156,7 +156,8 @@ TEST_CASE("A curried variadic function should preserve the lvalue ref-ness of "
   A a{};
   auto ref_to_a = [&a](...) -> A & { return a; };
   REQUIRE(curry···(ref_to_a)(tf::call) == A{});
-  REQUIRE(std::is_reference<decltype(curry···(ref_to_a)(tf::call))>::value);
+  REQUIRE(
+      std::is_lvalue_reference<decltype(curry···(ref_to_a)(tf::call))>::value);
 }
 
 TEST_CASE("Curried functions should…") {
