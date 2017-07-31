@@ -141,3 +141,17 @@ TEST_CASE("PMFs should curry", "[curry], [non-variadic], [interface]") {
   REQUIRE(foo_d_returner(&foo)(A{})(B{})(C{}) == D{});
   //                     ^ Always give pointer to object first.
 }
+
+TEST_CASE("Curried functions should…") {
+  auto ABtoC = curry([](A, B) -> C { return {}; });
+  auto BtoC = ABtoC(A{});
+
+  SECTION("… compose with other callables.",
+          "[curry], [compose], [interface]") {
+    REQUIRE(compose(BtoC, f)(A{}) == C{});
+  }
+
+  SECTION("… be components of pipeways.", "[curry], [pipe], [interface]") {
+    REQUIRE(pipe(A{}, f, BtoC) == C{});
+  }
+}
