@@ -1,3 +1,5 @@
+#pragma once
+
 #include <experimental/type_traits>
 #include <functional>
 #include <type_traits>
