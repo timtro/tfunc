@@ -37,18 +37,18 @@ namespace tf {
   struct call_t {
   } call;
 
-  namespace _dtl {
+  namespace dtl_ {
     // TODO Replace is_nullary with std::is_invocable when clang implements it.
     template <typename T>
     using is_nullary_t = decltype(std::invoke(std::declval<T>()));
 
     template <typename T>
     constexpr bool is_nullary_v = is_detected_v<is_nullary_t, T>;
-  } // namespace _dtl
+  } // namespace dtl_
 
   template <typename F>
   constexpr decltype(auto) curry(F f) {
-    if constexpr (_dtl::is_nullary_v<F>)
+    if constexpr (dtl_::is_nullary_v<F>)
       return std::invoke(f);
     else
       return [f](auto &&x) {
