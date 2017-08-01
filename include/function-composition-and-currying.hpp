@@ -36,6 +36,7 @@ namespace tf {
   } call;
 
   namespace _dtl {
+    // TODO Replace is_nullary with std::is_invocable when clang implements it.
     template <typename T>
     using is_nullary_t = decltype(std::invoke(std::declval<T>()));
 

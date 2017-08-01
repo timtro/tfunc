@@ -42,8 +42,9 @@ std::ostream &operator<<(std::ostream &os, D const &) {
   return os;
 }
 
-TEST_CASE("Polymorphic identity function should perfectly forward and …") {
-  SECTION("… take references") {
+TEST_CASE("Polymorphic identity function should perfectly forward and …",
+          "[id], [interface]") {
+  SECTION("… identify with references", "[mathematical]") {
     int a = 1;
     REQUIRE(id(a) == a);
     REQUIRE(std::is_lvalue_reference<decltype(id(a))>::value);

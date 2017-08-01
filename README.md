@@ -34,3 +34,9 @@ code review, and building up benchmarks for currying and composition.
   - The compose-key sequence for the middle-dot (·) is .^ or ^. (a period and a circumflex.)
   - Yes, the middle dot is allowed in the C++ standard (at least as far back as C++14).
   - Yes, I know what a stupid idea it is to use special characters in identifiers. However, I think this warrants an exception. This convention precludes the user from having to remember new function names for variadic flavours, and is approximately homogeneous with the variadic syntax in the language, which is three ASCII periods.
+
+* In `compose`, `pipe`, `curry` and friends, arguments are perfectly forwarded, but function arguments are copied. If they are stateless, this costs as much as copying a pointer. If you want to manipulate function objects with large state (or lambdas with large captures), then I recommend you implement [Vittorio Romeo's](https: // vittorioromeo.info/index/blog/cpp17_curry.html) Curry and partial application. He uses a technique for perfect capturing.
+
+  ## TODO
+
+  * Replace is_nullary with std::is_invocable when clang implements it.
