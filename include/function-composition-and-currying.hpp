@@ -8,24 +8,24 @@ using std::experimental::is_detected_v;
 namespace tf {
 
   template <typename T>
-  T id(T &&xs) {
+  constexpr T &&id(T &&xs) {
     return std::forward<T>(xs);
   }
 
   template <typename F, typename... Fs>
-  constexpr auto compose(F f, Fs... fs) {
+  constexpr decltype(auto) compose(F f, Fs... fs) {
     if constexpr (sizeof...(fs) < 1)
-      return [f](auto &&x) {
+      return [f](auto &&x) -> decltype(auto) {
         return std::invoke(f, std::forward<decltype(x)>(x));
       };
     else
-      return [f, fs...](auto &&x) {
+      return [f, fs...](auto &&x) -> decltype(auto) {
         return std::invoke(f, compose(fs...)(std::forward<decltype(x)>(x)));
       };
   }
 
   template <typename T, typename F0, typename... Fs>
-  constexpr auto pipe(T &&x, F0 f, Fs... gh) {
+  constexpr decltype(auto) pipe(T &&x, F0 f, Fs... gh) {
     if constexpr (sizeof...(Fs) < 1)
       return std::invoke(f, std::forward<decltype(x)>(x));
     else

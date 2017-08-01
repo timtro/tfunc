@@ -73,6 +73,15 @@ TEST_CASE("Sould be able to compose with PMFs", "[compose], [interface]") {
   REQUIRE(fog(&getable_a) == a);
 }
 
+TEST_CASE("Return of a composed function should preserve the rvalue-refness of "
+          "the outer function",
+          "[compose], [interface]") {
+  B b{};
+  auto ref_to_b = [&b](A) -> B & { return b; };
+  auto fog = compose(ref_to_b, id<A>);
+  REQUIRE(std::is_lvalue_reference<decltype(fog(A{}))>::value);
+}
+
 TEST_CASE("Piping should bear a relationship to composition, which is "
           "basically an order reversal in the argument list, with the "
           "inclusion of an initial argument.",
@@ -88,6 +97,14 @@ TEST_CASE("`pipe(f)` == `pipe(a, id_A, F)`` == `pipe(b, f id_B)`.",
 
 TEST_CASE("Pipes should work with C-functions", "[pipe], [interface]") {
   REQUIRE(pipe(A{}, id<A>, id<A>) == A{});
+}
+
+TEST_CASE(
+    "Return of a pipe should preserve the rvalue-refness of the outer function",
+    "[compose], [interface]") {
+  B b{};
+  auto ref_to_b = [&b](A) -> B & { return b; };
+  REQUIRE(std::is_lvalue_reference<decltype(pipe(A{}, ref_to_b))>::value);
 }
 
 TEST_CASE("Curried non-variadic functions should bind arguments, one at a "
