@@ -8,8 +8,8 @@ using std::experimental::is_detected_v;
 namespace tf {
 
   template <typename T>
-  constexpr T &&id(T &&xs) {
-    return std::forward<T>(xs);
+  constexpr decltype(auto) id(T &&x) {
+    return std::forward<T>(x);
   }
 
   template <typename F, typename... Fs>

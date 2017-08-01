@@ -42,6 +42,22 @@ std::ostream &operator<<(std::ostream &os, D const &) {
   return os;
 }
 
+TEST_CASE("Polymorphic identity function should perfectly forward and …") {
+  SECTION("… take references") {
+    int a = 1;
+    REQUIRE(id(a) == a);
+    REQUIRE(std::is_lvalue_reference<decltype(id(a))>::value);
+  }
+  SECTION("… preserve lvalue-refness") {
+    REQUIRE(
+        std::is_lvalue_reference<decltype(id(std::declval<int &>()))>::value);
+  }
+  SECTION("… preserve rvalue-refness") {
+    REQUIRE(
+        std::is_rvalue_reference<decltype(id(std::declval<int &&>()))>::value);
+  }
+}
+
 TEST_CASE("`compose(f)` == f.id_A == id_B.f.", "[compose], [mathematical]") {
   REQUIRE(compose(f)(A{}) == compose(f, id<A>)(A{}));
   REQUIRE(compose(f, id<A>)(A{}) == compose(id<B>, f)(A{}));
