@@ -39,6 +39,15 @@ static void bm_by_hand_a(benchmark::State &state) {
 }
 BENCHMARK(bm_by_hand_a);
 
+static void bm_tf_a(benchmark::State &state) {
+  auto fgh = compose01::compose(f, g, l2norm2D<double>,
+                                &getable<Point2D<double>>::get);
+  while (state.KeepRunning()) {
+    fgh(&pythag34);
+  }
+}
+BENCHMARK(bm_tf_a);
+
 static void bm_compose01_a(benchmark::State &state) {
   auto fgh = compose01::compose(f, g, l2norm2D<double>,
                                 &getable<Point2D<double>>::get);
