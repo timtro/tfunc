@@ -26,3 +26,11 @@ The following list contains some loose road-map planning that I'll try to keep u
 
 At the time of this writing the project is very new. I am still early in the
 code review, and building up benchmarks for currying and composition.
+
+
+## Notes
+
+* The variadic flavours of functions are identified with three trailing middle-dots (`···`). For example, the variadic flavour of `curry` is named `curry···`.
+  - The compose-key sequence for the middle-dot (·) is .^ or ^. (a period and a circumflex.)
+  - Yes, the middle dot is allowed in the C++ standard (at least as far back as C++14).
+  - Yes, I know what a stupid idea it is to use special characters in identifiers. However, I think this warrants an exception. This convention precludes the user from having to remember new function names for variadic flavours, and is approximately homogeneous with the variadic syntax in the language, which is three ASCII periods.

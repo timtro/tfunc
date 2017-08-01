@@ -57,9 +57,6 @@ namespace tf {
       };
   }
 
-  // Compose key sequence for the middle-dot (·) is .^ or ^. (a period and a
-  // circumflex.) I would normally never use a special character in a name, but
-  // I think this is a good convention for variadic flavours of functions.
   template <typename F>
   constexpr decltype(auto) curry···(F f) {
     return [f](auto x) -> decltype(auto) {
