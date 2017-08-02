@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 2.8)
 
 project(tfunc)
-set(CMAKE_CXX_COMPILER /usr/bin/clang++-5.0)
+set(CMAKE_CXX_COMPILER /usr/bin/clang++-6.0)
 set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
@@ -32,3 +32,5 @@ find_package(benchmark)
 
 add_subdirectory (bench)
 add_subdirectory (test)
+
+enable_testing()
