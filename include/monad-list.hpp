@@ -20,17 +20,30 @@ namespace tf {
 
     template <typename T>
     constexpr bool has_reserve_v = is_detected_v<has_reserve_t, T>;
+
+    template <typename AlwaysVoid, typename, typename...>
+    struct invoke_result {};
+    template <typename F, typename... Args>
+    struct invoke_result<decltype(void(std::invoke(std::declval<F>(),
+                                                   std::declval<Args>()...))),
+                         F, Args...> {
+      using type =
+          decltype(std::invoke(std::declval<F>(), std::declval<Args>()...));
+    };
   } // namespace dtl_
+
+  template <class F, class... ArgTypes>
+  struct invoke_result : dtl_::invoke_result<void, F, ArgTypes...> {};
+
+  template <class F, class... ArgTypes>
+  using invoke_result_t = typename invoke_result<F, ArgTypes...>::type;
 
   template <template <typename...> typename Container, typename T,
             typename... TArgs, typename F>
-  auto fmap(F &&f, const Container<T, TArgs...> xs) {
+  auto fmap(F f, const Container<T, TArgs...> xs) {
 
     using parameter_type = decltype(*begin(xs));
-    using invoke_result = decltype(
-        std::invoke(std::declval<F>(), std::declval<parameter_type>()));
-
-    Container<invoke_result> ys;
+    Container<invoke_result_t<F, parameter_type>> ys;
 
     if constexpr (dtl_::has_reserve_v<decltype(ys)>)
       ys.reserve(xs.size());
@@ -41,14 +54,13 @@ namespace tf {
   }
 
   template <typename F, typename A, size_t N>
-  auto fmap(F &&f, const std::array<A, N> &xs) {
+  auto fmap(F f, const std::array<A, N> &xs) {
     using parameter_type = decltype(*begin(xs));
-    using invoke_result = decltype(
-        std::invoke(std::declval<F>(), std::declval<parameter_type>()));
+    std::array<invoke_result_t<F, parameter_type>, N> ys;
 
-    std::array<invoke_result, N> ys;
-
-    std::transform(cbegin(xs), cend(xs), begin(ys), std::forward<F>(f));
+    // std::transform(cbegin(xs), cend(xs), begin(ys), std::forward<F>(f));
+    for (size_t i = 0; i < N; ++i)
+      ys[i] = f(xs[i]);
 
     return ys;
   }
@@ -56,7 +68,9 @@ namespace tf {
   // A delayed-binding wrapper producing a curried fmap variant.
   template <typename F>
   auto fmap(F f) {
-    return [f](auto xs) -> decltype(auto) { return fmap(f, xs); };
+    return [f](auto &&xs) -> decltype(auto) {
+      return fmap(f, std::forward<decltype(xs)>(xs));
+    };
   }
 
 } // namespace tf
