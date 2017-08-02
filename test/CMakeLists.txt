@@ -9,3 +9,8 @@ set(testname utest-function-composition-and-currying)
     add_executable (${testname} ${testname}.cpp)
     target_link_libraries (${testname} CATCH)
     create_test(${testname})
+
+set(testname utest-monad-list)
+    add_executable (${testname} ${testname}.cpp)
+    target_link_libraries (${testname} CATCH)
+    create_test(${testname})
