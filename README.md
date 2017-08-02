@@ -40,3 +40,4 @@ code review, and building up benchmarks for currying and composition.
   ## TODO
 
   * Replace is_nullary with std::is_invocable when clang implements it.
+  * Replace hand-rolled `invoke_result` in monad-list with `std::invoke_result` when clang implements it.
