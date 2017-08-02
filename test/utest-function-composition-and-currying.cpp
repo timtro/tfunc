@@ -1,8 +1,8 @@
-#include "../include/function-composition-and-currying.hpp"
-
 #include <catch/catch.hpp>
-#include <ostream>
-#include <string>
+#include <type_traits>
+
+#include "../include/function-composition-and-currying.hpp"
+#include "test-fixtures.hpp"
 
 using tf::compose;
 using tf::curry;
@@ -10,37 +10,12 @@ using tf::curry···;
 using tf::id;
 using tf::pipe;
 
-// clang-format off
-struct A {bool operator==(const A) const { return true; }};
-struct B {bool operator==(const B) const { return true; }};
-struct C {bool operator==(const C) const { return true; }};
-struct D {bool operator==(const D) const { return true; }};
-// clang-format on
-
 // f : A → B
-auto f = [](A) -> B { return {}; };
+const auto f = [](A) -> B { return {}; };
 // g : B → C
-auto g = [](B) -> C { return {}; };
+const auto g = [](B) -> C { return {}; };
 // h : C → D
-auto h = [](C) -> D { return {}; };
-
-// A nicety so that Catch can print
-std::ostream &operator<<(std::ostream &os, A const &) {
-  os << "A";
-  return os;
-}
-std::ostream &operator<<(std::ostream &os, B const &) {
-  os << "B";
-  return os;
-}
-std::ostream &operator<<(std::ostream &os, C const &) {
-  os << "C";
-  return os;
-}
-std::ostream &operator<<(std::ostream &os, D const &) {
-  os << "D";
-  return os;
-}
+const auto h = [](C) -> D { return {}; };
 
 TEST_CASE("Polymorphic identity function should perfectly forward and …",
           "[id], [interface]") {
