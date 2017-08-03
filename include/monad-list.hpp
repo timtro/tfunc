@@ -58,10 +58,7 @@ namespace tf {
     using parameter_type = decltype(*begin(xs));
     std::array<invoke_result_t<F, parameter_type>, N> ys;
 
-    // std::transform(cbegin(xs), cend(xs), begin(ys), std::forward<F>(f));
-    for (size_t i = 0; i < N; ++i)
-      ys[i] = f(xs[i]);
-
+    std::transform(cbegin(xs), cend(xs), begin(ys), f);
     return ys;
   }
 
