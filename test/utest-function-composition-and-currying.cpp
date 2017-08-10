@@ -20,8 +20,8 @@ const auto h = [](C) -> D { return {}; };
 TEST_CASE("Polymorphic identity function should perfectly forward and …",
           "[id], [interface]") {
   SECTION("… identify with references", "[mathematical]") {
-    int a = 1;
-    REQUIRE(id(a) == a);
+    auto a = A{};
+    REQUIRE(id(a) == A{});
     REQUIRE(std::is_lvalue_reference<decltype(id(a))>::value);
   }
   SECTION("… preserve lvalue-refness") {
@@ -181,4 +181,10 @@ TEST_CASE("Curried functions should…") {
   SECTION("… be components of pipeways.", "[curry], [pipe], [interface]") {
     REQUIRE(pipe(A{}, f, BtoC) == C{});
   }
+}
+
+TEST_CASE("Currying should work with the C++14 std outfix operators") {
+  auto plus = curry(std::plus<int>{});
+  auto increment = plus(1);
+  REQUIRE(increment(0) == 1);
 }
