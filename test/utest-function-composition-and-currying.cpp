@@ -19,9 +19,12 @@ const auto h = [](C) -> D { return {}; };
 
 TEST_CASE("Polymorphic identity function should perfectly forward and …",
           "[id], [interface]") {
+  SECTION("… identify lvalues", "[mathematical]") {
+    REQUIRE(id(A{}) == A{});
+    REQUIRE(id(B{}) == B{});
+  }
   SECTION("… identify with references", "[mathematical]") {
     auto a = A{};
-    REQUIRE(id(a) == A{});
     REQUIRE(std::is_lvalue_reference<decltype(id(a))>::value);
   }
   SECTION("… preserve lvalue-refness") {
