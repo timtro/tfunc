@@ -5,12 +5,12 @@ endmacro (create_test)
 add_library (CATCH catch.cpp)
 
 
-set(testname utest-function-composition-and-currying)
+set(testname utest-function-operations)
     add_executable (${testname} ${testname}.cpp)
     target_link_libraries (${testname} CATCH)
     create_test(${testname})
 
-set(testname utest-monad-list)
+set(testname utest-flist)
     add_executable (${testname} ${testname}.cpp)
     target_link_libraries (${testname} CATCH)
     create_test(${testname})

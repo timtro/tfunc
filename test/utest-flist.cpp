@@ -1,7 +1,7 @@
 #include <catch/catch.hpp>
 #include <type_traits>
 
-#include "../include/monad-list.hpp"
+#include "../include/functor/flist.hpp"
 #include "test-fixtures.hpp"
 
 #include <array>

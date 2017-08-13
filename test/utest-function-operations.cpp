@@ -1,7 +1,7 @@
 #include <catch/catch.hpp>
 #include <type_traits>
 
-#include "../include/function-composition-and-currying.hpp"
+#include "../include/function-operations.hpp"
 #include "test-fixtures.hpp"
 
 using tf::compose;
