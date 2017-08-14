@@ -1,14 +1,17 @@
 #include <catch/catch.hpp>
-#include <type_traits>
 
 #include "../include/functor/flist.hpp"
 #include "test-fixtures.hpp"
+
+#include <type_traits>
 
 #include <array>
 #include <deque>
 #include <list>
 #include <valarray>
 #include <vector>
+
+#include <map>
 
 using tf::fmap;
 
@@ -19,6 +22,23 @@ const auto g = [](B) -> C { return {}; };
 // h : C → D
 const auto h = [](C) -> D { return {}; };
 
+TEST_CASE("The std::vector<> typeconstructor should be a functor") {
+  REQUIRE(tf::is_functor<std::vector>::value == true);
+}
+
+TEST_CASE("The std::list<> typeconstructor should be a functor") {
+  REQUIRE(tf::is_functor<std::list>::value == true);
+}
+
+TEST_CASE("The std::array<> typeconstructor should be a functor") {
+  REQUIRE(tf::is_functor<std::list>::value == true);
+}
+
+TEST_CASE("The std::deque<> typeconstructor should be a functor") {
+  REQUIRE(tf::is_functor<std::list>::value == true);
+}
+
+// Dynamic tests that is_functor already tests statically.
 TEST_CASE("Given a standard library sequence container of As, and a function f "
           ": A → B, fmap should produce a container of Bs, for …") {
   SECTION("… std::vector") {

@@ -1,3 +1,7 @@
+#pragma once
+
+#include "functor.hpp"
+
 #include <algorithm>
 #include <experimental/type_traits>
 #include <functional>
@@ -60,14 +64,6 @@ namespace tf {
 
     std::transform(cbegin(xs), cend(xs), begin(ys), f);
     return ys;
-  }
-
-  // A delayed-binding wrapper producing a curried fmap variant.
-  template <typename F>
-  auto fmap(F f) {
-    return [f](auto &&xs) -> decltype(auto) {
-      return fmap(f, std::forward<decltype(xs)>(xs));
-    };
   }
 
 } // namespace tf
