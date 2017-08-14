@@ -31,6 +31,6 @@ endif()
 find_package(benchmark)
 
 add_subdirectory (bench)
-add_subdirectory (test)
 
 enable_testing()
+add_subdirectory (test)
