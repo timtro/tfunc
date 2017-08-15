@@ -16,6 +16,8 @@
 #include <valarray>
 #include <vector>
 
+#include <functional>
+
 using tf::fmap;
 //
 // template <typename T>
@@ -31,6 +33,25 @@ const auto g = [](B) -> C { return {}; };
 const auto h = [](C) -> D { return {}; };
 // id : A → A
 const auto id = [](auto x) { return x; };
+
+template <template <typename, typename...> typename Functor, typename A>
+struct Functor_t {
+  const Functor<A> &as;
+
+  Functor_t(const Functor<A> &as) : as{as} {}
+
+  template <typename F>
+  decltype(auto) map(F &&f) const {
+    return fmap(std::forward<F>(f), as);
+  }
+};
+
+template <template <typename, typename...> typename Functor, typename A,
+          typename... FCtorArgs>
+auto as_functor(const Functor<A, FCtorArgs...> &as) {
+  static_assert(tf::is_functor<Functor>::value);
+  return Functor_t<Functor, A>{as};
+}
 
 TEST_CASE("The std::vector type constructor should be a functor:") {
   REQUIRE(tf::is_functor<std::vector>::value == true);
@@ -56,10 +77,15 @@ TEST_CASE("Given a std::vector<A> …") {
   SECTION("… mapping over it with the id-function should leave it unchanged") {
     REQUIRE(fmap(id, as).at(0) == A{});
   }
+
   SECTION("… it should satisfy the composition relation: fmap(g, fmap(f, a)) "
           "== fmap(g∘f, a)") {
     REQUIRE(fmap(g, fmap(f, as)).at(0) == C{});
     REQUIRE(fmap(g, fmap(f, as)).at(0) == fmap(tf::compose(g, f), as).at(0));
+  }
+
+  SECTION("… it should cast to a functor:") {
+    REQUIRE(as_functor(as).map(f).at(0) == B{});
   }
 }
 
@@ -87,11 +113,16 @@ TEST_CASE("Given a std::list<A> …") {
   SECTION("… mapping over it with the id-function should leave it unchanged") {
     REQUIRE(*fmap(id, as).begin() == A{});
   }
+
   SECTION("… it should satisfy the composition relation: fmap(g, fmap(f, a)) "
           "== fmap(g∘f, a)") {
     REQUIRE(*fmap(g, fmap(f, as)).begin() == C{});
     REQUIRE(*fmap(g, fmap(f, as)).begin() ==
             *fmap(tf::compose(g, f), as).begin());
+  }
+
+  SECTION("… it should cast to a functor:") {
+    REQUIRE(*as_functor(as).map(f).begin() == B{});
   }
 }
 
@@ -124,6 +155,10 @@ TEST_CASE("Given a std::array<A,·> …") {
     REQUIRE(fmap(g, fmap(f, as)).at(0) == C{});
     REQUIRE(fmap(g, fmap(f, as)).at(0) == fmap(tf::compose(g, f), as).at(0));
   }
+
+  SECTION("… it should cast to a functor:") {
+    REQUIRE(as_functor(as).map(f).at(0) == B{});
+  }
 }
 
 TEST_CASE("The std::deque typeconstructor should be a functor:") {
@@ -150,10 +185,15 @@ TEST_CASE("Given a std::deque<A> …") {
   SECTION("… mapping over it with the id-function should leave it unchanged") {
     REQUIRE(fmap(id, as).at(0) == A{});
   }
+
   SECTION("… it should satisfy the composition relation: fmap(g, fmap(f, a)) "
           "== fmap(g∘f, a)") {
     REQUIRE(fmap(g, fmap(f, as)).at(0) == C{});
     REQUIRE(fmap(g, fmap(f, as)).at(0) == fmap(tf::compose(g, f), as).at(0));
+  }
+
+  SECTION("… it should cast to a functor:") {
+    REQUIRE(as_functor(as).map(f).at(0) == B{});
   }
 }
 
@@ -166,16 +206,19 @@ TEST_CASE("Given a function f : A → B, fmap should produce a function object "
     REQUIRE((std::is_same<decltype(lifted_f(as))::value_type, B>::value));
     REQUIRE(lifted_f(as).at(0) == B{});
   }
+
   SECTION("… std::list") {
     std::list as{A{}};
     REQUIRE((std::is_same<decltype(lifted_f(as))::value_type, B>::value));
     REQUIRE(*lifted_f(as).cbegin() == B{});
   }
+
   SECTION("… std::array") {
     std::array<A, 1> as{{A{}}};
     REQUIRE((std::is_same<decltype(lifted_f(as))::value_type, B>::value));
     REQUIRE(lifted_f(as).at(0) == B{});
   }
+
   SECTION("… std::deque") {
     std::deque as{A{}};
     REQUIRE((std::is_same<decltype(lifted_f(as))::value_type, B>::value));
