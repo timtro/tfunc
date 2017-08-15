@@ -8,6 +8,8 @@
 #include <iterator>
 #include <type_traits>
 
+#include "../function_traits.hpp"
+
 using std::begin;
 using std::cbegin;
 using std::cend;
