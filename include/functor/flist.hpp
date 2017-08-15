@@ -32,7 +32,7 @@ namespace tf {
   //
   template <template <typename...> typename Functor, typename A,
             typename... FCtorArgs, typename F>
-  auto fmap(F f, const Functor<A, FCtorArgs...> as) {
+  auto fmap(F f, const Functor<A, FCtorArgs...> &as) {
     Functor<trait::invoke_result_t<F, A>> bs;
 
     if constexpr (dtl_::has_reserve_v<decltype(bs)>)
