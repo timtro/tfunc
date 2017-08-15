@@ -13,7 +13,7 @@ namespace tf {
   template <template <typename, typename...> class Functor, typename A,
             typename B>
   using fmap_t = decltype(
-      fmap(std::declval<B (*)(A)>(), std::declval<Functor<A> const &>()));
+      fmap(std::declval<B (&)(A)>(), std::declval<Functor<A> const &>()));
 
   // is_functor<> : a metafunction to test if a given type constructor is a
   // Functor. A std::true_type is constructed if, for a candidate type
@@ -28,7 +28,7 @@ namespace tf {
   // A delayed-binding wrapper producing a curried fmap variant. That is to say,
   // this curried version of fmap produces a function lifted into a functor, but
   // the choice of which functor is delayed until the lambda is passed a functor
-  // type.
+  // of a specific type.
   template <typename F>
   auto fmap(F f) {
     return [f](auto &&xs) -> decltype(auto) {

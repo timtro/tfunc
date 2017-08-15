@@ -42,28 +42,27 @@ namespace tf {
   template <class F, class... ArgTypes>
   using invoke_result_t = typename invoke_result<F, ArgTypes...>::type;
 
-  template <template <typename...> typename Container, typename T,
-            typename... TArgs, typename F>
-  auto fmap(F f, const Container<T, TArgs...> xs) {
+  // fmap : (A → B) → F<A> → F<B>
+  //
+  template <template <typename...> typename Functor, typename A,
+            typename... FCtorArgs, typename F>
+  auto fmap(F f, const Functor<A, FCtorArgs...> as) {
+    Functor<invoke_result_t<F, A>> bs;
 
-    using parameter_type = decltype(*begin(xs));
-    Container<invoke_result_t<F, parameter_type>> ys;
+    if constexpr (dtl_::has_reserve_v<decltype(bs)>)
+      bs.reserve(as.size());
 
-    if constexpr (dtl_::has_reserve_v<decltype(ys)>)
-      ys.reserve(xs.size());
-
-    std::transform(cbegin(xs), cend(xs), std::back_inserter(ys),
+    std::transform(cbegin(as), cend(as), std::back_inserter(bs),
                    std::forward<F>(f));
-    return ys;
+    return bs;
   }
 
   template <typename F, typename A, size_t N>
-  auto fmap(F f, const std::array<A, N> &xs) {
-    using parameter_type = decltype(*begin(xs));
-    std::array<invoke_result_t<F, parameter_type>, N> ys;
+  auto fmap(F f, const std::array<A, N> &as) {
+    std::array<invoke_result_t<F, A>, N> bs;
 
-    std::transform(cbegin(xs), cend(xs), begin(ys), f);
-    return ys;
+    std::transform(cbegin(as), cend(as), begin(bs), f);
+    return bs;
   }
 
 } // namespace tf
