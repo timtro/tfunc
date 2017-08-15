@@ -15,7 +15,7 @@ using std::experimental::optional;
 template <typename A, typename F>
 auto fmap(F f, const optional<A> oa) {
   if (oa) {
-    return make_optional(f(oa));
+    return make_optional(f(*oa));
   } else
     return optional<trait::invoke_result_t<F, A>>{};
 }
