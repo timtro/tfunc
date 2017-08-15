@@ -16,16 +16,8 @@
 #include <valarray>
 #include <vector>
 
-#include <functional>
-
 using tf::as_functor;
 using tf::fmap;
-
-//
-// template <typename T>
-// constexpr decltype(auto) id(T x) {
-//   return x;
-// }
 
 // f : A → B
 const auto f = [](A) -> B { return {}; };
