@@ -1,10 +1,10 @@
 #pragma once
 
+#include "../function_traits.hpp"
 #include "functor.hpp"
 
 #include <algorithm>
 #include <experimental/type_traits>
-#include <functional>
 #include <iterator>
 #include <type_traits>
 
@@ -24,30 +24,14 @@ namespace tf {
 
     template <typename T>
     constexpr bool has_reserve_v = is_detected_v<has_reserve_t, T>;
-
-    template <typename AlwaysVoid, typename, typename...>
-    struct invoke_result {};
-    template <typename F, typename... Args>
-    struct invoke_result<decltype(void(std::invoke(std::declval<F>(),
-                                                   std::declval<Args>()...))),
-                         F, Args...> {
-      using type =
-          decltype(std::invoke(std::declval<F>(), std::declval<Args>()...));
-    };
   } // namespace dtl_
-
-  template <class F, class... ArgTypes>
-  struct invoke_result : dtl_::invoke_result<void, F, ArgTypes...> {};
-
-  template <class F, class... ArgTypes>
-  using invoke_result_t = typename invoke_result<F, ArgTypes...>::type;
 
   // fmap : (A → B) → F<A> → F<B>
   //
   template <template <typename...> typename Functor, typename A,
             typename... FCtorArgs, typename F>
   auto fmap(F f, const Functor<A, FCtorArgs...> as) {
-    Functor<invoke_result_t<F, A>> bs;
+    Functor<trait::invoke_result_t<F, A>> bs;
 
     if constexpr (dtl_::has_reserve_v<decltype(bs)>)
       bs.reserve(as.size());
@@ -59,7 +43,7 @@ namespace tf {
 
   template <typename F, typename A, size_t N>
   auto fmap(F f, const std::array<A, N> &as) {
-    std::array<invoke_result_t<F, A>, N> bs;
+    std::array<trait::invoke_result_t<F, A>, N> bs;
 
     std::transform(cbegin(as), cend(as), begin(bs), f);
     return bs;
