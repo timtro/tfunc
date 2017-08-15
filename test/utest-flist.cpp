@@ -18,7 +18,9 @@
 
 #include <functional>
 
+using tf::as_functor;
 using tf::fmap;
+
 //
 // template <typename T>
 // constexpr decltype(auto) id(T x) {
@@ -33,25 +35,6 @@ const auto g = [](B) -> C { return {}; };
 const auto h = [](C) -> D { return {}; };
 // id : A → A
 const auto id = [](auto x) { return x; };
-
-template <template <typename, typename...> typename Functor, typename A>
-struct Functor_t {
-  const Functor<A> &as;
-
-  Functor_t(const Functor<A> &as) : as{as} {}
-
-  template <typename F>
-  decltype(auto) map(F &&f) const {
-    return fmap(std::forward<F>(f), as);
-  }
-};
-
-template <template <typename, typename...> typename Functor, typename A,
-          typename... FCtorArgs>
-auto as_functor(const Functor<A, FCtorArgs...> &as) {
-  static_assert(tf::is_functor<Functor>::value);
-  return Functor_t<Functor, A>{as};
-}
 
 TEST_CASE("The std::vector type constructor should be a functor:") {
   REQUIRE(tf::is_functor<std::vector>::value == true);
@@ -85,7 +68,7 @@ TEST_CASE("Given a std::vector<A> …") {
   }
 
   SECTION("… it should cast to a functor:") {
-    REQUIRE(as_functor(as).map(f).at(0) == B{});
+    REQUIRE(as_functor(as).fmap(f).at(0) == B{});
   }
 }
 
@@ -122,7 +105,7 @@ TEST_CASE("Given a std::list<A> …") {
   }
 
   SECTION("… it should cast to a functor:") {
-    REQUIRE(*as_functor(as).map(f).begin() == B{});
+    REQUIRE(*as_functor(as).fmap(f).begin() == B{});
   }
 }
 
@@ -157,7 +140,7 @@ TEST_CASE("Given a std::array<A,·> …") {
   }
 
   SECTION("… it should cast to a functor:") {
-    REQUIRE(as_functor(as).map(f).at(0) == B{});
+    REQUIRE(as_functor(as).fmap(f).at(0) == B{});
   }
 }
 
@@ -193,7 +176,7 @@ TEST_CASE("Given a std::deque<A> …") {
   }
 
   SECTION("… it should cast to a functor:") {
-    REQUIRE(as_functor(as).map(f).at(0) == B{});
+    REQUIRE(as_functor(as).fmap(f).at(0) == B{});
   }
 }
 

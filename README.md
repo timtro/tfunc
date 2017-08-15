@@ -30,14 +30,31 @@ code review, and building up benchmarks for currying and composition.
 
 ## Notes
 
-* The variadic flavours of functions are identified with three trailing middle-dots (`···`). For example, the variadic flavour of `curry` is named `curry···`.
+  * The variadic flavours of functions are identified with three trailing middle-dots (`···`). For example, the variadic flavour of `curry` is named `curry···`.
   - The compose-key sequence for the middle-dot (·) is .^ or ^. (a period and a circumflex.)
   - Yes, the middle dot is allowed in the C++ standard (at least as far back as C++14).
   - Yes, I know what a stupid idea it is to use special characters in identifiers. However, I think this warrants an exception. This convention precludes the user from having to remember new function names for variadic flavours, and is approximately homogeneous with the variadic syntax in the language, which is three ASCII periods.
 
-* In `compose`, `pipe`, `curry` and friends, arguments are perfectly forwarded, but function arguments are copied. If they are stateless, this costs as much as copying a pointer. If you want to manipulate function objects with large state (or lambdas with large captures), then I recommend you implement [Vittorio Romeo's](https: // vittorioromeo.info/index/blog/cpp17_curry.html) Curry and partial application. He uses a technique for perfect capturing.
+  * In `compose`, `pipe`, `curry` and friends, arguments are perfectly forwarded, but function arguments are copied. If they are stateless, this costs as much as copying a pointer. If you want to manipulate function objects with large state (or lambdas with large captures), then I recommend you implement [Vittorio Romeo's](https: // vittorioromeo.info/index/blog/cpp17_curry.html) Curry and partial application. He uses a technique for perfect capturing.
+
+  * I have implemented the `is_functor` casting helper which places a static interface around an instance of a functor type so that fmap may be called as such:
+    ```cpp
+      std::vector<int> a{1,2,3};
+      as_functor(a).fmap(sqr).fmap(sqrt).fmap(…
+    ```
+    Though, at the moment, the best one can do is:
+    ```cpp
+      …as_functor(as_functor(std::whatever).fmap(f)).fmap(g))…
+    ```
+    which is haenous. This all relies on the class template `Functor_t` which has a `map` member which simply binds to whatever `fmap` overload SFINAEs appropriately given the types involved. I'm working on this as a static alternative to the Functor class template in [awgn/cat](https://github.com/awgn/cat/blob/master/cat/functor/functor.hpp) which does dynamic dispatch with a virtual fmap method.
+
 
   ## TODO
 
   * Replace is_nullary with std::is_invocable when clang implements it.
   * Replace hand-rolled `invoke_result` in monad-list with `std::invoke_result` when clang implements it.
+  * Investigate using an actual casting operator to do the work of as_functor. I want some implicit casting mechanism to enable this style of code:
+    ```cpp
+      std::vector<int> a{1,2,3};
+      as_functor(a).fmap(sqr).fmap(sqrt).fmap(…
+    ```
