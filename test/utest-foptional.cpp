@@ -11,6 +11,11 @@ using tst::g;  // g : B → C
 using tst::h;  // h : C → D
 using tst::id; // id : T → T
 
+constexpr auto Default = CtorLogger::Default;
+constexpr auto CopyConstructed = CtorLogger::CopyConstructed;
+constexpr auto MoveConstructed = CtorLogger::MoveConstructed;
+constexpr auto MovedFrom = CtorLogger::MovedFrom;
+
 #include "../include/function-operations.hpp"
 #include "../include/functor/flist.hpp"
 #include "../include/functor/foptional.hpp"
@@ -68,9 +73,13 @@ TEST_CASE("Given an empty std::optional<A>…") {
   }
 }
 
-TEST_CASE("1") {
+TEST_CASE("As it is currently implemented, a call to fmap should result in one "
+          "move construction more than a simply calling invoke on a "
+          "dereferenced optional value:") {
   optional<CtorLogger> ocl;
-  ocl.emplace();
-  REQUIRE(ocl->flags == std::vector{CtorLogger::Flags::Default});
-  REQUIRE(std::invoke(id, *ocl).flags == fmap(id, ocl)->flags);
+  ocl.emplace(); // ocl.flags = {Default}
+  auto raw_invoke = std::invoke(
+      id, *ocl); // flags = {Default, CopyConstructed, MoveConstructed}
+  raw_invoke.flags.push_back(MoveConstructed);
+  REQUIRE(fmap(id, ocl)->flags == raw_invoke.flags);
 }
