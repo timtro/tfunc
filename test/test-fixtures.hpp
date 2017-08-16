@@ -41,24 +41,51 @@ struct D {bool operator==(const D) const { return true; }};
 
   // Logs which constructor is called by pushing flags into a vector. Also
   // records if an instance was *moved from*!
-  struct CtorLogger {
 
-    enum class Flags {
-      Default,         // 0
-      CopyConstructed, // 1
-      CopiedFrom,      // 2
-      MoveConstructed, // 3
-      MovedFrom        // 4
+  struct CtorLogger {
+    enum CtorLoggerFlags {
+      Default,
+      CopyConstructed,
+      CopiedFrom,
+      MoveConstructed,
+      MovedFrom
     };
 
-    std::vector<Flags> flags;
-    CtorLogger() : flags{Flags::Default} {}
+    std::vector<CtorLoggerFlags> flags;
+    CtorLogger() : flags{Default} {}
     CtorLogger(const CtorLogger &orig) : flags{orig.flags} {
-      flags.push_back(Flags::CopyConstructed);
+      flags.push_back(CopyConstructed);
     }
     CtorLogger(CtorLogger &&orig) : flags{orig.flags} {
-      flags.push_back(Flags::MoveConstructed);
-      orig.flags.push_back(Flags::MovedFrom);
+      flags.push_back(MoveConstructed);
+      orig.flags.push_back(MovedFrom);
     }
   };
+
+  std::ostream &operator<<(std::ostream &os,
+                           CtorLogger::CtorLoggerFlags const &flag) {
+    switch (flag) {
+    case CtorLogger::CtorLoggerFlags::Default:
+      os << "Def ";
+      break;
+    case CtorLogger::CtorLoggerFlags::CopyConstructed:
+      os << "CpyCtd ";
+      break;
+    case CtorLogger::CtorLoggerFlags::CopiedFrom:
+      os << "CpyFm ";
+      break;
+    case CtorLogger::CtorLoggerFlags::MoveConstructed:
+      os << "MovCtd ";
+      break;
+    case CtorLogger::CtorLoggerFlags::MovedFrom:
+      os << "MovFm ";
+      break;
+    default:
+      os << "Unknown:";
+      os << static_cast<int>(flag) << ' ';
+      break;
+    }
+    return os;
+  }
+
 } // namespace tst
