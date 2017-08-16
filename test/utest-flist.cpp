@@ -4,29 +4,28 @@
 
 #include <catch/catch.hpp>
 
-#include "../include/function-operations.hpp"
-#include "../include/functor/flist.hpp"
 #include "test-fixtures.hpp"
+using tst::A;  // Tag for unit type
+using tst::B;  // Tag for unit type
+using tst::C;  // Tag for unit type
+using tst::D;  // Tag for unit type
+using tst::f;  // f : A → B
+using tst::g;  // g : B → C
+using tst::h;  // h : C → D
+using tst::id; // id : T → T
 
-#include <type_traits>
+#include "../include/function-operations.hpp"
+
+#include "../include/functor/flist.hpp"
+using tf::as_functor; // as_functor : G<A> → F<A>;
+using tf::fmap;       // fmap : (A → B) → F<A> → F<B>
 
 #include <array>
 #include <deque>
 #include <list>
+#include <type_traits>
 #include <valarray>
 #include <vector>
-
-using tf::as_functor;
-using tf::fmap;
-
-// f : A → B
-const auto f = [](A) -> B { return {}; };
-// g : B → C
-const auto g = [](B) -> C { return {}; };
-// h : C → D
-const auto h = [](C) -> D { return {}; };
-// id : A → A
-const auto id = [](auto x) { return x; };
 
 TEST_CASE("The std::vector type constructor should be a functor:") {
   REQUIRE(tf::is_functor<std::vector>::value == true);

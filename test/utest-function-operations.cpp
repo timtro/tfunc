@@ -1,21 +1,24 @@
 #include <catch/catch.hpp>
-#include <type_traits>
+
+#include "test-fixtures.hpp"
+using tst::A; // Tag for unit type
+using tst::B; // Tag for unit type
+using tst::C; // Tag for unit type
+using tst::CtorLogger;
+using tst::D; // Tag for unit type
+using tst::f; // f : A → B
+using tst::g; // g : B → C
+using tst::h; // h : C → D
 
 #include "../include/function-operations.hpp"
-#include "test-fixtures.hpp"
+
+#include <type_traits>
 
 using tf::compose;
 using tf::curry;
 using tf::curry···;
 using tf::id;
 using tf::pipe;
-
-// f : A → B
-const auto f = [](A) -> B { return {}; };
-// g : B → C
-const auto g = [](B) -> C { return {}; };
-// h : C → D
-const auto h = [](C) -> D { return {}; };
 
 TEST_CASE("Polymorphic identity function should perfectly forward and …",
           "[id], [interface]") {
