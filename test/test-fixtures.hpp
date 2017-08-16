@@ -53,9 +53,16 @@ struct D {bool operator==(const D) const { return true; }};
 
     std::vector<CtorLoggerFlags> flags;
     CtorLogger() : flags{Default} {}
+
     CtorLogger(const CtorLogger &orig) : flags{orig.flags} {
       flags.push_back(CopyConstructed);
     }
+
+    CtorLogger(CtorLogger &orig) : flags{orig.flags} {
+      flags.push_back(CopyConstructed);
+      orig.flags.push_back(CopiedFrom);
+    }
+
     CtorLogger(CtorLogger &&orig) : flags{orig.flags} {
       flags.push_back(MoveConstructed);
       orig.flags.push_back(MovedFrom);
