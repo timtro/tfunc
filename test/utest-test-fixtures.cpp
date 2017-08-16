@@ -30,4 +30,6 @@ TEST_CASE("CtorLogger should properly identify which constructor is called:") {
     REQUIRE(to_be_moved.flags == (std::vector{Default, MovedFrom}));
     REQUIRE(moved_to.flags == (std::vector{Default, MoveConstructed}));
   }
+
+  // TODO: Write test for non-consty copy ctor.
 }

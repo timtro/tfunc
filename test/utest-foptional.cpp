@@ -73,9 +73,8 @@ TEST_CASE("Given an empty std::optional<A>…") {
   }
 }
 
-TEST_CASE("As it is currently implemented, a call to fmap should result in one "
-          "move construction more than a simply calling invoke on a "
-          "dereferenced optional value:") {
+TEST_CASE("Comparing a call to fmap to a direct invocation on a dereferenced "
+          "optional, there should be two differences: (1)") {
   optional<CtorLogger> ocl;
   ocl.emplace(); // ocl.flags = {Default}
   auto raw_invoke = std::invoke(
