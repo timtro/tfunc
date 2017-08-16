@@ -21,3 +21,5 @@ auto fmap(F f, const optional<A> &oa) {
   } else
     return optional<trait::invoke_result_t<F, A>>{};
 }
+
+#include "curried-fmap.hpp"

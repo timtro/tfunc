@@ -15,7 +15,6 @@ using tst::h;  // h : C → D
 using tst::id; // id : T → T
 
 #include "../include/function-operations.hpp"
-
 #include "../include/functor/flist.hpp"
 using tf::as_functor; // as_functor : G<A> → F<A>;
 using tf::fmap;       // fmap : (A → B) → F<A> → F<B>

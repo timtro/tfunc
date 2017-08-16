@@ -25,14 +25,4 @@ namespace tf {
   struct is_functor<Functor, std::void_t<fmap_t<Functor, DumA_, DumB_>>>
       : std::is_same<fmap_t<Functor, DumA_, DumB_>, Functor<DumB_>> {};
 
-  // A delayed-binding wrapper producing a curried fmap variant. That is to say,
-  // this curried version of fmap produces a function lifted into a functor, but
-  // the choice of which functor is delayed until the lambda is passed a functor
-  // of a specific type.
-  template <typename F>
-  auto fmap(F f) {
-    return [f](auto &&xs) -> decltype(auto) {
-      return fmap(f, std::forward<decltype(xs)>(xs));
-    };
-  }
 } // namespace tf

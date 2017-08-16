@@ -70,3 +70,5 @@ namespace tf {
   }
 
 } // namespace tf
+
+#include "curried-fmap.hpp"
