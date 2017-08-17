@@ -11,11 +11,6 @@ using tst::g;  // g : B → C
 using tst::h;  // h : C → D
 using tst::id; // id : T → T
 
-constexpr auto Default = CtorLogger::Default;
-constexpr auto CopyConstructed = CtorLogger::CopyConstructed;
-constexpr auto MoveConstructed = CtorLogger::MoveConstructed;
-constexpr auto MovedFrom = CtorLogger::MovedFrom;
-
 #include "../include/function-operations.hpp"
 #include "../include/functor/flist.hpp"
 #include "../include/functor/foptional.hpp"
@@ -27,7 +22,14 @@ using std::experimental::optional;
 using tf::as_functor; // as_functor : G<A> → F<A>;
 using tf::fmap;       // fmap : (A → B) → F<A> → F<B>
 
-#include "../include/functor/functor.hpp"
+#include <algorithm>
+
+constexpr auto Default = CtorLogger::Default;
+constexpr auto CopyConstructed = CtorLogger::CopyConstructed;
+constexpr auto NCCopyConstructed = CtorLogger::NCCopyConstructed;
+constexpr auto NCCopiedFrom = CtorLogger::NCCopiedFrom;
+constexpr auto MoveConstructed = CtorLogger::MoveConstructed;
+constexpr auto MovedFrom = CtorLogger::MovedFrom;
 
 TEST_CASE("The std::optional type constructor should be a functor:") {
   REQUIRE(tf::is_functor<std::vector>::value == true);
@@ -73,12 +75,29 @@ TEST_CASE("Given an empty std::optional<A>…") {
   }
 }
 
-TEST_CASE("Comparing a call to fmap to a direct invocation on a dereferenced "
-          "optional, there should be two differences: (1)") {
-  optional<CtorLogger> ocl;
-  ocl.emplace(); // ocl.flags = {Default}
-  auto raw_invoke = std::invoke(
-      id, *ocl); // flags = {Default, CopyConstructed, MoveConstructed}
-  raw_invoke.flags.push_back(MoveConstructed);
-  REQUIRE(fmap(id, ocl)->flags == raw_invoke.flags);
+auto nccpy_to_cpy(const std::vector<CtorLogger::flag_type> &v) {
+  std::vector<CtorLogger::flag_type> outv;
+  outv.reserve(v.size());
+  std::replace_copy_if(v.cbegin(), v.cend(), std::back_inserter(outv),
+                       [](auto x) { return x == NCCopyConstructed; },
+                       CopyConstructed);
+  return outv;
+}
+
+TEST_CASE("The only difference between mapping id on an optional containing a "
+          "value, and simply invoking id on a the dereferenced optional should "
+          "be that fmap forces the use of a const-copy constructor.") {
+  optional<CtorLogger> oCtorLogger;
+  oCtorLogger.emplace(); // flags = {Default}
+
+  auto RawInvokeResult = make_optional(std::invoke(id, *oCtorLogger));
+
+  oCtorLogger.emplace(); // refresh the logger to default
+  REQUIRE(oCtorLogger->flags == std::vector{Default});
+
+  auto FmapResult = fmap(id, oCtorLogger);
+  auto rawFlagsTransformed = nccpy_to_cpy(RawInvokeResult->flags);
+
+  REQUIRE(FmapResult->flags != RawInvokeResult->flags);
+  REQUIRE(FmapResult->flags == rawFlagsTransformed);
 }
