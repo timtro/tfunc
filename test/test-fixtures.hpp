@@ -46,10 +46,13 @@ struct D {bool operator==(const D) const { return true; }};
     enum CtorLoggerFlags {
       Default,
       CopyConstructed,
-      CopiedFrom,
+      NCCopyConstructed,
+      NCCopiedFrom,
       MoveConstructed,
       MovedFrom
     };
+
+    using flag_type = CtorLoggerFlags;
 
     std::vector<CtorLoggerFlags> flags;
     CtorLogger() : flags{Default} {}
@@ -59,8 +62,8 @@ struct D {bool operator==(const D) const { return true; }};
     }
 
     CtorLogger(CtorLogger &orig) : flags{orig.flags} {
-      flags.push_back(CopyConstructed);
-      orig.flags.push_back(CopiedFrom);
+      flags.push_back(NCCopyConstructed);
+      orig.flags.push_back(NCCopiedFrom);
     }
 
     CtorLogger(CtorLogger &&orig) : flags{orig.flags} {
@@ -78,8 +81,11 @@ struct D {bool operator==(const D) const { return true; }};
     case CtorLogger::CtorLoggerFlags::CopyConstructed:
       os << "CpyCtd ";
       break;
-    case CtorLogger::CtorLoggerFlags::CopiedFrom:
-      os << "CpyFm ";
+    case CtorLogger::CtorLoggerFlags::NCCopyConstructed:
+      os << "NCCpyCtd ";
+      break;
+    case CtorLogger::CtorLoggerFlags::NCCopiedFrom:
+      os << "NCCpyFm ";
       break;
     case CtorLogger::CtorLoggerFlags::MoveConstructed:
       os << "MovCtd ";

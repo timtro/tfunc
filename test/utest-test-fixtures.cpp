@@ -6,6 +6,8 @@ using tst::CtorLogger;
 
 constexpr auto Default = CtorLogger::Default;
 constexpr auto CopyConstructed = CtorLogger::CopyConstructed;
+constexpr auto NCCopyConstructed = CtorLogger::NCCopyConstructed;
+constexpr auto NCCopiedFrom = CtorLogger::NCCopiedFrom;
 constexpr auto MoveConstructed = CtorLogger::MoveConstructed;
 constexpr auto MovedFrom = CtorLogger::MovedFrom;
 
