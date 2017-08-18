@@ -10,6 +10,8 @@ constexpr auto NCCopyConstructed = CtorLogger::NCCopyConstructed;
 constexpr auto NCCopiedFrom = CtorLogger::NCCopiedFrom;
 constexpr auto MoveConstructed = CtorLogger::MoveConstructed;
 constexpr auto MovedFrom = CtorLogger::MovedFrom;
+constexpr auto MoveAssignedFrom = CtorLogger::MoveAssignedFrom;
+constexpr auto MoveAssignedTo = CtorLogger::MoveAssignedTo;
 
 TEST_CASE("Default constructed should have a history of a default constructed "
           "value:") {
@@ -40,6 +42,17 @@ TEST_CASE("Copy constructed object should reflect default construction of "
 TEST_CASE("Move constructed object should reflect default construction of "
           "original, and the move construction. Also, the object moved from "
           "should have logged that it was moved from.") {
+  CtorLogger default_constructed;
+  CtorLogger to_be_moved; // == CtorLogger::Flags::Default
+  auto moved_to = std::move(to_be_moved);
+  REQUIRE(to_be_moved.flags == (std::vector{Default, MovedFrom}));
+  REQUIRE(moved_to.flags == (std::vector{Default, MoveConstructed}));
+}
+
+TEST_CASE("In move assignment, the moved object should reflect default "
+          "construction of its origin, and the move assignment. Also, the "
+          "object moved from should have logged  that it was move assigned "
+          "from.") {
   CtorLogger default_constructed;
   CtorLogger to_be_moved; // == CtorLogger::Flags::Default
   auto moved_to = std::move(to_be_moved);

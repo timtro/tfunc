@@ -52,7 +52,9 @@ struct D {bool operator==(const D) const { return true; }};
       NCCopyAssignedTo,
       NCCopyAssignedFrom,
       MoveConstructed,
-      MovedFrom
+      MovedFrom,
+      MoveAssignedTo,
+      MoveAssignedFrom
     };
 
     using flat_t = CtorLoggerFlags;
@@ -90,6 +92,15 @@ struct D {bool operator==(const D) const { return true; }};
       flags.push_back(MoveConstructed);
       orig.flags.push_back(MovedFrom);
     }
+
+    CtorLogger &operator=(CtorLogger &&orig) {
+      if (&orig == this)
+        return *this;
+      flags = orig.flags;
+      flags.push_back(MoveAssignedTo);
+      orig.flags.push_back(MoveAssignedFrom);
+      return *this;
+    }
   };
 
   std::ostream &operator<<(std::ostream &os,
@@ -121,6 +132,12 @@ struct D {bool operator==(const D) const { return true; }};
       break;
     case CtorLogger::CtorLoggerFlags::MovedFrom:
       os << "MovFm ";
+      break;
+    case CtorLogger::CtorLoggerFlags::MoveAssignedTo:
+      os << "MoveAsTo ";
+      break;
+    case CtorLogger::CtorLoggerFlags::MoveAssignedFrom:
+      os << "MoveAsFm ";
       break;
     default:
       os << "Unknown:";
