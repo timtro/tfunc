@@ -48,11 +48,14 @@ struct D {bool operator==(const D) const { return true; }};
       CopyConstructed,
       NCCopyConstructed,
       NCCopiedFrom,
+      CopyAssignedTo,
+      NCCopyAssignedTo,
+      NCCopyAssignedFrom,
       MoveConstructed,
       MovedFrom
     };
 
-    using flag_type = CtorLoggerFlags;
+    using flat_t = CtorLoggerFlags;
 
     std::vector<CtorLoggerFlags> flags;
     CtorLogger() : flags{Default} {}
@@ -64,6 +67,23 @@ struct D {bool operator==(const D) const { return true; }};
     CtorLogger(CtorLogger &orig) : flags{orig.flags} {
       flags.push_back(NCCopyConstructed);
       orig.flags.push_back(NCCopiedFrom);
+    }
+
+    CtorLogger &operator=(const CtorLogger &orig) {
+      if (&orig == this)
+        return *this;
+      flags = orig.flags;
+      flags.push_back(CopyAssignedTo);
+      return *this;
+    }
+
+    CtorLogger &operator=(CtorLogger &orig) {
+      if (&orig == this)
+        return *this;
+      flags = orig.flags;
+      flags.push_back(NCCopyAssignedTo);
+      orig.flags.push_back(NCCopyAssignedFrom);
+      return *this;
     }
 
     CtorLogger(CtorLogger &&orig) : flags{orig.flags} {
@@ -86,6 +106,15 @@ struct D {bool operator==(const D) const { return true; }};
       break;
     case CtorLogger::CtorLoggerFlags::NCCopiedFrom:
       os << "NCCpyFm ";
+      break;
+    case CtorLogger::CtorLoggerFlags::CopyAssignedTo:
+      os << "CpyAsTo ";
+      break;
+    case CtorLogger::CtorLoggerFlags::NCCopyAssignedTo:
+      os << "NCCpyAsTo ";
+      break;
+    case CtorLogger::CtorLoggerFlags::NCCopyAssignedFrom:
+      os << "NCCpyAsFm ";
       break;
     case CtorLogger::CtorLoggerFlags::MoveConstructed:
       os << "MovCtd ";
