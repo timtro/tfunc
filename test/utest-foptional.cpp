@@ -24,18 +24,11 @@ using tf::fmap;       // fmap : (A → B) → F<A> → F<B>
 
 #include <algorithm>
 
-constexpr auto Default = CtorLogger::Default;
-constexpr auto CopyConstructed = CtorLogger::CopyConstructed;
-constexpr auto NCCopyConstructed = CtorLogger::NCCopyConstructed;
-constexpr auto NCCopiedFrom = CtorLogger::NCCopiedFrom;
-constexpr auto MoveConstructed = CtorLogger::MoveConstructed;
-constexpr auto MovedFrom = CtorLogger::MovedFrom;
-
 TEST_CASE("The std::optional type constructor should be a functor:") {
   REQUIRE(tf::is_functor<std::vector>::value == true);
 }
 
-TEST_CASE("Given a std::optional<A> holding a value…") {
+TEST_CASE("Given a std::optional<A> holding a value…", "[mathematical]") {
 
   optional<A> oa{A{}};
 
@@ -56,7 +49,7 @@ TEST_CASE("Given a std::optional<A> holding a value…") {
   }
 }
 
-TEST_CASE("Given an empty std::optional<A>…") {
+TEST_CASE("Given an empty std::optional<A>…", "[mathematical]") {
   optional<A> oa;
 
   SECTION("… and a function f : A → B, fmap should produce an empty "
@@ -75,25 +68,27 @@ TEST_CASE("Given an empty std::optional<A>…") {
   }
 }
 
-auto nccpy_to_cpy(const std::vector<CtorLogger::flag_type> &v) {
-  std::vector<CtorLogger::flag_type> outv;
+auto nccpy_to_cpy(const std::vector<CtorLogger::flat_t> &v) {
+  std::vector<CtorLogger::flat_t> outv;
   outv.reserve(v.size());
-  std::replace_copy_if(v.cbegin(), v.cend(), std::back_inserter(outv),
-                       [](auto x) { return x == NCCopyConstructed; },
-                       CopyConstructed);
+  std::replace_copy_if(
+      v.cbegin(), v.cend(), std::back_inserter(outv),
+      [](auto x) { return x == CtorLogger::NCCopyConstructed; },
+      CtorLogger::CopyConstructed);
   return outv;
 }
 
 TEST_CASE("The only difference between mapping id on an optional containing a "
           "value, and simply invoking id on a the dereferenced optional should "
-          "be that fmap forces the use of a const-copy constructor.") {
+          "be that fmap forces the use of a const-copy constructor.",
+          "[CtorAs]") {
   optional<CtorLogger> oCtorLogger;
   oCtorLogger.emplace(); // flags = {Default}
 
   auto RawInvokeResult = make_optional(std::invoke(id, *oCtorLogger));
 
   oCtorLogger.emplace(); // refresh the logger to default
-  REQUIRE(oCtorLogger->flags == std::vector{Default});
+  REQUIRE(oCtorLogger->flags == std::vector{CtorLogger::Default});
 
   auto FmapResult = fmap(id, oCtorLogger);
   auto rawFlagsTransformed = nccpy_to_cpy(RawInvokeResult->flags);
