@@ -8,6 +8,8 @@ constexpr auto Default = CtorLogger::Default;
 constexpr auto CopyConstructed = CtorLogger::CopyConstructed;
 constexpr auto NCCopyConstructed = CtorLogger::NCCopyConstructed;
 constexpr auto NCCopiedFrom = CtorLogger::NCCopiedFrom;
+constexpr auto NCCopyAssignedTo = CtorLogger::NCCopyAssignedTo;
+constexpr auto NCCopyAssignedFrom = CtorLogger::NCCopyAssignedFrom;
 constexpr auto MoveConstructed = CtorLogger::MoveConstructed;
 constexpr auto MovedFrom = CtorLogger::MovedFrom;
 constexpr auto MoveAssignedFrom = CtorLogger::MoveAssignedFrom;
@@ -37,6 +39,17 @@ TEST_CASE("Copy constructed object should reflect default construction of "
   auto copied_to = to_be_copied;
   REQUIRE(to_be_copied.flags == (std::vector{Default, NCCopiedFrom}));
   REQUIRE(copied_to.flags == (std::vector{Default, NCCopyConstructed}));
+}
+
+TEST_CASE("In non-const copy assignment, the copied object should reflect "
+          "default construction of its origin, and the non-const copy "
+          "assignment. Also, the object copied from should have logged that it "
+          "was copy assigned from, since the operation was non-const.") {
+  CtorLogger copied_from;
+  CtorLogger copied_into;
+  copied_into = copied_from;
+  REQUIRE(copied_from.flags == (std::vector{Default, NCCopyAssignedFrom}));
+  REQUIRE(copied_into.flags == (std::vector{Default, NCCopyAssignedTo}));
 }
 
 TEST_CASE("Move constructed object should reflect default construction of "
