@@ -132,8 +132,8 @@ TEST_CASE("For std::list, calling fmap should induce the same constructor and "
 TEST_CASE("The std::array typeconstructor will not technically be a functor, "
           "because it can not be constructed with the form F<A>",
           "[FIXME]") {
-  REQUIRE("FIXME" == "FIXME");
-  // REQUIRE(tf::is_functor<std::array>::value == true);
+  // REQUIRE(tf::is_functor<std::array>::value != true);
+  REQUIRE((tf::is_dfunctor<std::array, std::size_t{}>::value) == true);
 }
 
 TEST_CASE("Given a std::array<A,·> …", "[fmap]") {
