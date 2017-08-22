@@ -21,22 +21,30 @@ namespace tf {
   template <template <typename, typename...> class, typename = void>
   struct is_functor : std::false_type {};
 
+  // Will is_functor be true_type if an fmap overload exists with the correct
+  // signature ( fmap( B(A), F<A>) and it produces an F<B>.
   template <template <typename, typename...> class Functor>
   struct is_functor<Functor, std::void_t<fmap_t<Functor, DumA_, DumB_>>>
       : std::is_same<fmap_t<Functor, DumA_, DumB_>, Functor<DumB_>> {};
 
-  template <template <typename, std::size_t> class DFunctor, std::size_t N,
+  // The std::array constructor, unlike the other std containers, needs a
+  // size_t (natural number : N) specifying the size of the array. This makes it
+  // a dependent type of the product (pi) variety. The template signature for
+  // the type constrcutor conflics with those for other std containers so this
+  // set of meta/functions works for types that need a size_t to construct them.
+  //
+  template <template <typename, std::size_t> class Functor, std::size_t N,
             typename A, typename B>
-  using dfmap_t = decltype(
-      fmap(std::declval<B (&)(A)>(), std::declval<DFunctor<A, N> const &>()));
+  using fmap_N_t = decltype(
+      fmap(std::declval<B (&)(A)>(), std::declval<Functor<A, N> const &>()));
 
-  template <template <typename, std::size_t> class, std::size_t N,
-            typename = void>
-  struct is_dfunctor : std::false_type {};
+  template <template <typename, std::size_t> class, typename = void>
+  struct is_functor_N : std::false_type {};
 
-  template <template <typename, std::size_t> class DFunctor, std::size_t N>
-  struct is_dfunctor<DFunctor, N,
-                     std::void_t<dfmap_t<DFunctor, N, DumA_, DumB_>>>
-      : std::is_same<dfmap_t<DFunctor, N, DumA_, DumB_>, DFunctor<DumB_, N>> {};
+  template <template <typename, std::size_t> class Functor>
+  struct is_functor_N<
+      Functor, std::void_t<fmap_N_t<Functor, std::size_t{}, DumA_, DumB_>>>
+      : std::is_same<fmap_N_t<Functor, std::size_t{}, DumA_, DumB_>,
+                     Functor<DumB_, std::size_t{}>> {};
 
 } // namespace tf
