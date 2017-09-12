@@ -30,6 +30,10 @@ namespace tf {
 
   // fmap : (A → B) → F<A> → F<B>
   //
+  // This version specifies on a collection functor, F,  which can be
+  // constructed with a typename (F<typename>) or list of typenames. This
+  // includes std::vector and std::list. If F has a reserve(·) member like
+  // std::vector does, it is called to avoid needless allocations.
   template <template <typename...> typename Functor, typename A,
             typename... FCtorArgs, typename F>
   auto fmap(F f, const Functor<A, FCtorArgs...> &as) {
@@ -43,6 +47,11 @@ namespace tf {
     return bs;
   }
 
+  // fmap : (A → B) → F<A> → F<B>
+  //
+  // This version is specific to std::array, which can't be constructed as
+  // std::array<typename...>, because it needs a size_t. This makes it a
+  // dependent type, which requires a little more care than a regular functor.
   template <typename F, typename A, size_t N>
   auto fmap(F f, const std::array<A, N> &as) {
     std::array<trait::invoke_result_t<F, A>, N> bs;

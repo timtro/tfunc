@@ -12,6 +12,8 @@ using std::experimental::make_optional;
 using std::experimental::optional;
 
 // fmap : (A → B) → F<A> → F<B>
+//
+// Accepts optional value by reference, and then dereferences on pass to invoke.
 template <typename A, typename F>
 auto fmap(F f, const optional<A> &oa) {
   if (oa) {
@@ -22,6 +24,9 @@ auto fmap(F f, const optional<A> &oa) {
 }
 
 // fmap : (A → B) → F<A> → F<B>
+//
+// Takes optional by universal reference and moves from the dereferenced
+// optional.
 template <typename A, typename F>
 auto fmap(F f, optional<A> &&oa) {
   if (oa) {
