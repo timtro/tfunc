@@ -241,7 +241,6 @@ TEST_CASE("Given a function f : A → B, fmap should produce a function object "
   auto lifted_f = fmap(f);
   SECTION("… std::vector") {
     std::vector as{A{}};
-    auto lifted_f = fmap(f);
     REQUIRE((std::is_same<decltype(lifted_f(as))::value_type, B>::value));
     REQUIRE(lifted_f(as).at(0) == B{});
   }
