@@ -60,24 +60,6 @@ namespace tf {
     return bs;
   }
 
-  // A static interface for any functor.
-  template <typename Functor>
-  struct Functor_t {
-    const Functor &as;
-
-    Functor_t(const Functor &as) : as{as} {}
-
-    template <typename F>
-    decltype(auto) fmap(F &&f) const {
-      return tf::fmap(std::forward<F>(f), as);
-    }
-  };
-
-  template <typename Functor>
-  auto as_functor(const Functor &as) {
-    return Functor_t<Functor>{as};
-  }
-
 } // namespace tf
 
 #include "curried-fmap.hpp"
