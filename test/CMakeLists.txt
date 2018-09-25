@@ -23,3 +23,8 @@ set(testname utest-foptional)
     add_executable (${testname} ${testname}.cpp)
     target_link_libraries (${testname} CATCH)
     create_test(${testname})
+
+set(testname utest-thesis-examples)
+    add_executable (${testname} ${testname}.cpp)
+    target_link_libraries (${testname} CATCH)
+    create_test(${testname})
