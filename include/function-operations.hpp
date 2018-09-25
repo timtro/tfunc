@@ -37,18 +37,9 @@ namespace tf {
   struct call_t {
   } call;
 
-  namespace dtl_ {
-    // TODO Replace is_nullary with std::is_invocable when clang implements it.
-    template <typename T>
-    using is_nullary_t = decltype(std::invoke(std::declval<T>()));
-
-    template <typename T>
-    constexpr bool is_nullary_v = is_detected_v<is_nullary_t, T>;
-  } // namespace dtl_
-
   template <typename F>
   constexpr decltype(auto) curry(F f) {
-    if constexpr (dtl_::is_nullary_v<F>)
+    if constexpr (std::is_invocable_v<F>)
       return std::invoke(f);
     else
       return [f](auto &&x) {
@@ -60,6 +51,7 @@ namespace tf {
       };
   }
 
+  // Looks for a call_t as a sentinal to signal the end of the curry.
   template <typename F>
   constexpr decltype(auto) curry···(F f) {
     return [f](auto x) -> decltype(auto) {

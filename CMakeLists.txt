@@ -1,11 +1,12 @@
 cmake_minimum_required (VERSION 2.8)
 
 project(tfunc)
-set(CMAKE_CXX_COMPILER /usr/bin/clang++-6.0)
+set(CMAKE_CXX_COMPILER /usr/bin/clang++-7)
 set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
-set(c++std "-std=c++17")
+set(c++std "-std=c++17 -stdlib=libc++")
+set(linker-flags "-lc++abi")
 set(common "-fno-omit-frame-pointer -pg")
 set(warnings "-Wall -Wextra -Werror -pedantic")
 set(optimizations_debug "-O2")
@@ -14,7 +15,8 @@ set(debug "-g")
 set(perf_bench "-fno-omit-frame-pointer")
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} ${c++std} ${common} ${debug} ${warnings} ${optimizations_debug}")
-# set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} ${c++std}")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} ${c++std} ${common} ${warnings} ${optimizations_release}")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${linker-flags}")
 
 # for clang++ use -fuse-ld=gold to avoid LD error "File format not recognized"
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
@@ -30,7 +32,7 @@ endif()
 
 find_package(benchmark)
 
-add_subdirectory (bench)
+# add_subdirectory (bench)
 
 enable_testing()
 add_subdirectory (test)

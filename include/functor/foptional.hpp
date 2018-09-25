@@ -3,13 +3,13 @@
 #include "../function_traits.hpp"
 #include "functor.hpp"
 #include <algorithm>
-#include <experimental/optional>
-#include <experimental/type_traits>
+#include <optional>
+#include <type_traits>
 #include <functional>
 #include <type_traits>
 
-using std::experimental::make_optional;
-using std::experimental::optional;
+using std::make_optional;
+using std::optional;
 
 // fmap : (A → B) → F<A> → F<B>
 //
