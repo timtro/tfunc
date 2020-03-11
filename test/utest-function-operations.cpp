@@ -1,4 +1,4 @@
-#include <catch/catch.hpp>
+#include <catch2/catch.hpp>
 
 #include "test-fixtures.hpp"
 using tst::A; // Tag for unit type

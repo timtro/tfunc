@@ -2,7 +2,7 @@
 // standard container types for which I have defined functors have their functor
 // interface tested here.
 
-#include <catch/catch.hpp>
+#include <catch2/catch.hpp>
 
 #include "test-fixtures.hpp"
 using tst::A; // Tag for unit type
@@ -17,6 +17,7 @@ using tst::id; // id : T → T
 
 #include "../include/function-operations.hpp"
 #include "../include/functor/flist.hpp"
+#include "../include/functor/curried-fmap.hpp"
 using tf::as_functor; // as_functor : G<A> → F<A>;
 using tf::fmap;       // fmap : (A → B) → F<A> → F<B>
 

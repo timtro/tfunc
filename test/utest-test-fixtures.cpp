@@ -1,4 +1,4 @@
-#include <catch/catch.hpp>
+#include <catch2/catch.hpp>
 
 #include "test-fixtures.hpp"
 
@@ -13,8 +13,8 @@ constexpr auto NCCopyAssignedTo = CtorLogger::NCCopyAssignedTo;
 constexpr auto NCCopyAssignedFrom = CtorLogger::NCCopyAssignedFrom;
 constexpr auto MoveConstructed = CtorLogger::MoveConstructed;
 constexpr auto MovedFrom = CtorLogger::MovedFrom;
-constexpr auto MoveAssignedFrom = CtorLogger::MoveAssignedFrom;
-constexpr auto MoveAssignedTo = CtorLogger::MoveAssignedTo;
+/* constexpr auto MoveAssignedFrom = CtorLogger::MoveAssignedFrom; */
+/* constexpr auto MoveAssignedTo = CtorLogger::MoveAssignedTo; */
 
 TEST_CASE("Default constructed should have a history of a default constructed "
           "value:") {

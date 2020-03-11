@@ -1,5 +1,6 @@
-#include <catch/catch.hpp>
+#include <catch2/catch.hpp>
 #include <optional>
+#include <algorithm>
 
 #include "test-fixtures.hpp"
 using tst::A; // Tag for unit type
@@ -16,14 +17,14 @@ using tst::id; // id : T → T
 #include "../include/functor/flist.hpp"
 #include "../include/functor/foptional.hpp"
 
+#include "../include/functor/curried-fmap.hpp"
+
 using std::make_optional;
 using std::nullopt;
 using std::optional;
 
 using tf::as_functor; // as_functor : G<A> → F<A>;
 using tf::fmap;       // fmap : (A → B) → F<A> → F<B>
-
-#include <algorithm>
 
 TEST_CASE("The std::optional type constructor should be a functor:") {
   REQUIRE(tf::is_functor<std::vector>::value == true);
@@ -97,3 +98,11 @@ TEST_CASE("The only difference between mapping id on an optional containing a "
   REQUIRE(FmapResult->flags != RawInvokeResult->flags);
   REQUIRE(FmapResult->flags == rawFlagsTransformed);
 }
+
+// TEST_CASE("Test delayed binding"){
+//   auto sqr = [](int x) -> int { return x * x; };
+//   auto osqr = fmap(sqr);
+//   auto result = osqr(std::optional<int>(4));
+//
+//   REQUIRE( *result == 4 * 4 );
+// }
