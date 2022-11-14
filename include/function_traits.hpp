@@ -16,7 +16,7 @@ namespace trait {
       using type =
           decltype(std::invoke(std::declval<F>(), std::declval<Args>()...));
     };
-  } // namespace dtl_
+  }  // namespace dtl_
 
   template <class F, class... ArgTypes>
   struct invoke_result : dtl_::invoke_result<void, F, ArgTypes...> {};
@@ -24,4 +24,4 @@ namespace trait {
   template <class F, class... ArgTypes>
   using invoke_result_t = typename invoke_result<F, ArgTypes...>::type;
 
-} // namespace trait
+}  // namespace trait
