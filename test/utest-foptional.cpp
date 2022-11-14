@@ -99,10 +99,12 @@ TEST_CASE("The only difference between mapping id on an optional containing a "
   REQUIRE(FmapResult->flags == rawFlagsTransformed);
 }
 
-// TEST_CASE("Test delayed binding"){
-//   auto sqr = [](int x) -> int { return x * x; };
-//   auto osqr = fmap(sqr);
-//   auto result = osqr(std::optional<int>(4));
-//
-//   REQUIRE( *result == 4 * 4 );
-// }
+ // TEST_CASE("Test delayed binding"){
+ //   // auto sqr = [](int x) -> int { return x * x; };
+ //   // auto osqr = fmap(sqr);
+ //   // auto result = osqr(std::optional<int>{4});
+ //   const auto Ff = fmap(id);
+ //   auto result = f(std::optional<A>{});
+ //
+ //   REQUIRE( *result == A{} );
+ // }
