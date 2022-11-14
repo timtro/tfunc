@@ -1,12 +1,13 @@
 cmake_minimum_required (VERSION 2.8)
 
-project(tfunc)
-set(CMAKE_CXX_COMPILER /usr/bin/clang++-7)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
-set(c++std "-std=c++17 -stdlib=libc++")
-set(linker-flags "-lc++abi")
+project(tfunc)
+
+set(c++std "-std=c++17")
+# set(c++std "-std=c++17 -stdlib=libc++")
 set(common "-fno-omit-frame-pointer -pg")
 set(warnings "-Wall -Wextra -Werror -pedantic")
 set(optimizations_debug "-O2")
@@ -32,7 +33,7 @@ endif()
 
 find_package(benchmark)
 
-# add_subdirectory (bench)
+add_subdirectory (bench)
 
 enable_testing()
 add_subdirectory (test)
