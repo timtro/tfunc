@@ -14,29 +14,23 @@ using tst::h;  // h : C → D
 using tst::id; // id : T → T
 
 #include "../include/function-operations.hpp"
-#include "../include/functor/flist.hpp"
 #include "../include/functor/foptional.hpp"
 
 #include "../include/functor/curried-fmap.hpp"
-
-using std::make_optional;
-using std::nullopt;
-using std::optional;
-
 using tf::as_functor; // as_functor : G<A> → F<A>;
 using tf::fmap;       // fmap : (A → B) → F<A> → F<B>
 
 TEST_CASE("The std::optional type constructor should be a functor:") {
-  REQUIRE(tf::is_functor<std::vector>::value == true);
+  REQUIRE(tf::is_functor<std::optional>::value == true);
 }
 
 TEST_CASE("Given a std::optional<A> holding a value…", "[mathematical]") {
 
-  optional<A> oa{A{}};
+  std::optional<A> oa{A{}};
 
   SECTION("… and a function f : A → B, fmap should produce an occupied "
           "std::optional<B>:") {
-    REQUIRE(fmap(f, oa) == make_optional(B{}));
+    REQUIRE(fmap(f, oa) == std::make_optional(B{}));
     REQUIRE(*fmap(f, oa) == B{});
   }
 
@@ -46,26 +40,26 @@ TEST_CASE("Given a std::optional<A> holding a value…", "[mathematical]") {
   }
 
   SECTION("… fmap should obey the functor composition law:") {
-    REQUIRE(fmap(g, fmap(f, oa)) == make_optional(C{}));
+    REQUIRE(fmap(g, fmap(f, oa)) == std::make_optional(C{}));
     REQUIRE(fmap(g, fmap(f, oa)) == fmap(tf::compose(g, f), oa));
   }
 }
 
 TEST_CASE("Given an empty std::optional<A>…", "[mathematical]") {
-  optional<A> oa;
+  std::optional<A> oa;
 
   SECTION("… and a function f : A → B, fmap should produce an empty "
           "std::optional<B>:") {
-    REQUIRE(fmap(f, oa) == optional<B>{});
+    REQUIRE(fmap(f, oa) == std::optional<B>{});
   }
 
   SECTION("… it should remain unchaged when fmaped with id.") {
-    REQUIRE(fmap(id, oa) == nullopt);
+    REQUIRE(fmap(id, oa) == std::nullopt);
     REQUIRE(fmap(id, oa) == oa);
   }
 
   SECTION("… fmap should obey the functor composition law:") {
-    REQUIRE(fmap(g, fmap(f, oa)) == optional<C>{});
+    REQUIRE(fmap(g, fmap(f, oa)) == std::optional<C>{});
     REQUIRE(fmap(g, fmap(f, oa)) == fmap(tf::compose(g, f), oa));
   }
 }
@@ -84,10 +78,10 @@ TEST_CASE("The only difference between mapping id on an optional containing a "
           "value, and simply invoking id on a the dereferenced optional should "
           "be that fmap forces the use of a const-copy constructor.",
           "[CtorAs]") {
-  optional<CtorLogger> oCtorLogger;
+  std::optional<CtorLogger> oCtorLogger;
   oCtorLogger.emplace(); // flags = {Default}
 
-  auto RawInvokeResult = make_optional(std::invoke(id, *oCtorLogger));
+  auto RawInvokeResult = std::make_optional(std::invoke(id, *oCtorLogger));
 
   oCtorLogger.emplace(); // refresh the logger to default
   REQUIRE(oCtorLogger->flags == std::vector{CtorLogger::Default});
