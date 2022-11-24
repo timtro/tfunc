@@ -4,7 +4,6 @@
 using tst::A; // Tag for unit type
 using tst::B; // Tag for unit type
 using tst::C; // Tag for unit type
-using tst::CtorLogger;
 using tst::D; // Tag for unit type
 using tst::f; // f : A → B
 using tst::g; // g : B → C
@@ -16,7 +15,7 @@ using tst::h; // h : C → D
 
 using tf::compose;
 using tf::curry;
-using tf::curry···;
+using tf::curry_variadic;
 using tf::id;
 using tf::pipe;
 
@@ -132,7 +131,7 @@ TEST_CASE("Curried variadic functions should bind arguments, one at a time, "
   };
 
   // argument_echo··· : Q → W → … → (Q, W, …), for any types Q, W, ….
-  auto argument_echo··· = curry···(argument_echo);
+  auto argument_echo··· = curry_variadic(argument_echo);
   auto[a, b, c, d] = argument_echo···(A{})(B{})(C{})(D{})(tf::call);
   REQUIRE(a == A{});
   REQUIRE(b == B{});
@@ -172,9 +171,9 @@ TEST_CASE("A curried variadic function should preserve the lvalue ref-ness of "
           "[curry], [variadic], [interface]") {
   A a{};
   auto ref_to_a = [&a](...) -> A & { return a; };
-  REQUIRE(curry···(ref_to_a)(tf::call) == A{});
+  REQUIRE(curry_variadic(ref_to_a)(tf::call) == A{});
   REQUIRE(
-      std::is_lvalue_reference<decltype(curry···(ref_to_a)(tf::call))>::value);
+      std::is_lvalue_reference<decltype(curry_variadic(ref_to_a)(tf::call))>::value);
 }
 
 TEST_CASE("Curried functions should…") {

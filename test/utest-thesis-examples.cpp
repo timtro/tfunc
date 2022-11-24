@@ -19,7 +19,7 @@ using tst::h;  // h : C → D
 
 using tf::compose;
 using tf::curry;
-using tf::curry···;
+using tf::curry_variadic;
 using tf::id;
 using tf::pipe;
 

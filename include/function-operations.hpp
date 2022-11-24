@@ -53,12 +53,12 @@ namespace tf {
 
   // Looks for a call_t as a sentinal to signal the end of the curry.
   template <typename F>
-  constexpr decltype(auto) curry···(F f) {
+  constexpr decltype(auto) curry_variadic(F f) {
     return [f](auto x) -> decltype(auto) {
       if constexpr (std::is_same<std::decay_t<decltype(x)>, call_t>::value)
         return std::invoke(f);
       else
-        return curry···(
+        return curry_variadic(
             // perfectly capture x here:
             [f, x](auto &&... xs) -> decltype(std::invoke(f, x, xs...)) {
               return std::invoke(f, x, xs...);
