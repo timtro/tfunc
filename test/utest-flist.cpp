@@ -15,9 +15,11 @@ using tst::g;   // g : B → C
 using tst::h;   // h : C → D
 using tst::id;  // id : T → T
 
+// clang-format off
 #include "../include/function-operations.hpp"
-#include "../include/functor/curried-fmap.hpp"
 #include "../include/functor/flist.hpp"
+#include "../include/functor/curried-fmap.hpp"
+// clang-format on
 using tf::as_functor;  // as_functor : G<A> → F<A>;
 using tf::fmap;        // fmap : (A → B) → F<A> → F<B>
 
